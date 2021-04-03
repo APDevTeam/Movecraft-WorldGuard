@@ -174,7 +174,7 @@ public class WorldGuardUtils {
             if(r.getFlag(DefaultFlag.TNT) != StateFlag.State.DENY || r.getOwners().size() == 0)
                 continue;
 
-            if(exclusions.contains(r.getId()))
+            if(exclusions.contains(r.getId().toUpperCase()))
                 continue;
 
             return r.getId();
