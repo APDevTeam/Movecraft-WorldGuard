@@ -1,14 +1,18 @@
 package net.countercraft.movecraft.worldguard.utils;
 
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.LocalPlayer;
+import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.BukkitUtil;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionQuery;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.utils.HitBox;
@@ -58,14 +62,15 @@ public class WorldGuardUtils {
 
     private boolean canBuild(Player p, World w, HitBox hitbox) {
         for(MovecraftLocation ml : getHitboxCorners(hitbox)) {
-            if(!wgPlugin.canBuild(p, ml.toBukkit(w)))
+            if(!canBuild(p, ml.toBukkit(w)))
                 return false;
         }
         return true;
     }
 
     private boolean canBuild(Player p, Location loc) {
-        return wgPlugin.canBuild(p, loc);
+        RegionQuery query = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
+        return query.queryState(BukkitAdapter.adapt(loc), wgPlugin.wrapPlayer(p), Flags.BUILD) == StateFlag.State.ALLOW;
     }
 
     public boolean isPVPAllowed(World w, HitBox hitBox) {
@@ -79,7 +84,7 @@ public class WorldGuardUtils {
     public boolean isPVPAllowed(Location loc) {
         ApplicableRegionSet set = getApplicableRegions(loc);
         for(ProtectedRegion r : set) {
-            if(r.getFlag(DefaultFlag.PVP) == StateFlag.State.DENY)
+            if(r.getFlag(Flags.PVP) == StateFlag.State.DENY)
                 return false;
         }
         return true;
@@ -88,7 +93,7 @@ public class WorldGuardUtils {
     public boolean isOtherExplosionAllowed(Location loc) {
         ApplicableRegionSet set = getApplicableRegions(loc);
         for(ProtectedRegion r : set) {
-            if(r.getFlag(DefaultFlag.OTHER_EXPLOSION) == StateFlag.State.DENY)
+            if(r.getFlag(Flags.OTHER_EXPLOSION) == StateFlag.State.DENY)
                 return false;
         }
         return true;
@@ -103,7 +108,7 @@ public class WorldGuardUtils {
         for(MovecraftLocation ml : getHitboxCorners(hitBox)) {
             ApplicableRegionSet set = getApplicableRegions(ml.toBukkit(w));
             for(ProtectedRegion r : set) {
-                if(r.getFlag(DefaultFlag.TNT) == StateFlag.State.DENY)
+                if(r.getFlag(Flags.TNT) == StateFlag.State.DENY)
                     return false;
             }
         }
@@ -118,7 +123,7 @@ public class WorldGuardUtils {
     // Siege Features
 
     public boolean craftFullyInRegion(String regionName, World w, Craft craft) {
-        ProtectedRegion r = wgPlugin.getRegionManager(w).getRegion(regionName);
+        ProtectedRegion r = getRegion(regionName, w);
         if(r == null)
             return false;
 
@@ -130,7 +135,7 @@ public class WorldGuardUtils {
     }
 
     public void clearAndSetOwnership(String regionName, World w, UUID owner) {
-        ProtectedRegion region = wgPlugin.getRegionManager(w).getRegion(regionName);
+        ProtectedRegion region = getRegion(regionName, w);
         if(region == null)
             return;
 
@@ -161,8 +166,12 @@ public class WorldGuardUtils {
 
     public boolean ownsAssaultableRegion(Player p) {
         LocalPlayer lp = wgPlugin.wrapPlayer(p);
-        for(ProtectedRegion r : wgPlugin.getRegionManager(p.getWorld()).getRegions().values()) {
-            if(r.isOwner(lp) && r.getFlag(DefaultFlag.TNT) == StateFlag.State.DENY)
+        RegionManager manager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(p.getWorld()));
+        if(manager == null)
+            return false;
+
+        for(ProtectedRegion r : manager.getRegions().values()) {
+            if(r.isOwner(lp) && r.getFlag(Flags.TNT) == StateFlag.State.DENY)
                 return true;
         }
         return false;
@@ -171,10 +180,10 @@ public class WorldGuardUtils {
     @Nullable
     public String getAssaultableRegion(Location loc, HashSet<String> exclusions) {
         for(ProtectedRegion r : getApplicableRegions(loc)) {
-            if(r.getFlag(DefaultFlag.TNT) != StateFlag.State.DENY || r.getOwners().size() == 0)
+            if(r.getFlag(Flags.TNT) != StateFlag.State.DENY || r.getOwners().size() == 0)
                 continue;
 
-            if(exclusions.contains(r.getId()))
+            if(exclusions.contains(r.getId().toUpperCase()))
                 continue;
 
             return r.getId();
@@ -205,7 +214,7 @@ public class WorldGuardUtils {
         if(r == null)
             return;
 
-        r.setFlag(DefaultFlag.TNT, StateFlag.State.ALLOW);
+        r.setFlag(Flags.TNT, StateFlag.State.ALLOW);
     }
 
     public void setTNTDeny(String regionName, World w) {
@@ -213,7 +222,7 @@ public class WorldGuardUtils {
         if(r == null)
             return;
 
-        r.setFlag(DefaultFlag.TNT, StateFlag.State.DENY);
+        r.setFlag(Flags.TNT, StateFlag.State.DENY);
     }
 
     public void clearOwners(String regionName, World w) {
@@ -291,7 +300,7 @@ public class WorldGuardUtils {
         if(r == null)
             return false;
 
-        return r.getFlag(DefaultFlag.TNT) == StateFlag.State.DENY;
+        return r.getFlag(Flags.TNT) == StateFlag.State.DENY;
     }
 
     @Nullable
@@ -351,17 +360,21 @@ public class WorldGuardUtils {
 
     @Nullable
     private ProtectedRegion getRegion(String regionName, World w) {
-        return wgPlugin.getRegionManager(w).getRegion(regionName);
+        RegionManager regions = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(w));
+        if(regions == null)
+            return null;
+
+        return regions.getRegion(regionName);
     }
 
     @NotNull
     private ApplicableRegionSet getApplicableRegions(Location loc) {
-        Vector vector = BukkitUtil.toVector(loc);
-        return wgPlugin.getRegionManager(loc.getWorld()).getApplicableRegions(vector);
+        RegionQuery query = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
+        return query.getApplicableRegions(BukkitAdapter.adapt(loc));
     }
 
     @NotNull
-    private MovecraftLocation vectorToMovecraftLocation(@NotNull Vector v) {
+    private MovecraftLocation vectorToMovecraftLocation(@NotNull BlockVector3 v) {
         return new MovecraftLocation(v.getBlockX(), v.getBlockY(), v.getBlockZ());
     }
 
