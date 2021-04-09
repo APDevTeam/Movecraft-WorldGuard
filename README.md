@@ -5,11 +5,11 @@ Home of the code for the following features:
  - WorldGuard plugin integration
 
 ## Version support
-The `main` branch is coded for WorldGuard v6.1.x for 1.10.2.
+The `1.10.2` branch is coded for WorldGuard v6.1.x for 1.10.2.  Support for this version is only for critical issues.
 
-The `dev` branch is coded for WorldGuard v6.2.x for 1.12.2.
+The `1.12.2` branch is coded for WorldGuard v6.2.x for 1.12.2.
 
-The `next` branch is coded for WorldGuard v7.x.x for 1.13+.
+The `main` branch is coded for WorldGuard v7.x.x for 1.13+.
 
 ## Download
 
