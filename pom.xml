@@ -6,7 +6,7 @@
 
     <groupId>net.countercraft.movecraft.worldguard</groupId>
     <artifactId>Movecraft-WorldGuard</artifactId>
-    <version>0.3.3</version>
+    <version>0.4.a</version>
     <packaging>jar</packaging>
 
     <name>Movecraft-WorldGuard</name>
@@ -89,7 +89,7 @@
         <dependency>
             <groupId>net.countercraft.movecraft</groupId>
             <artifactId>Movecraft</artifactId>
-            <version>7.0.0</version>
+            <version>LATEST</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/../Movecraft/target/Movecraft.jar</systemPath>
         </dependency>
