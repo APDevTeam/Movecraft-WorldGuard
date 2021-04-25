@@ -6,7 +6,7 @@
 
     <groupId>net.countercraft.movecraft.worldguard</groupId>
     <artifactId>Movecraft-WorldGuard</artifactId>
-    <version>0.4.b</version>
+    <version>1.a.0</version>
     <packaging>jar</packaging>
 
     <name>Movecraft-WorldGuard</name>
