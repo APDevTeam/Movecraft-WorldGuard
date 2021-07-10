@@ -24,7 +24,7 @@ This plugin requires that the user setup and build their [Movecraft](https://git
 java -jar BuildTools.jar --rev 1.14.4
 ```
 
-Then, run the following to build Movecraft-Towny through `maven`.
+Then, run the following to build Movecraft-WorldGuard through `maven`.
 ```
 mvn clean install
 ```
