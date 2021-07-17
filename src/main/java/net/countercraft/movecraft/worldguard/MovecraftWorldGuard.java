@@ -1,6 +1,6 @@
 package net.countercraft.movecraft.worldguard;
 
-import net.countercraft.movecraft.combat.movecraftcombat.MovecraftCombat;
+import net.countercraft.movecraft.combat.MovecraftCombat;
 import net.countercraft.movecraft.worldguard.config.Config;
 import net.countercraft.movecraft.worldguard.listener.*;
 import net.countercraft.movecraft.worldguard.localisation.I18nSupport;
