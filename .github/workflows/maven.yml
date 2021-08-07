@@ -34,10 +34,14 @@ jobs:
     # Build Movecraft-Combat
     - name: Build Movecraft-Combat
       run:  mvn -B package -T 1C --file Movecraft-Combat/pom.xml
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     # Build Movecraft-WorldGuard
     - name: Build Movecraft-WorldGuard
       run: mvn -B package -T 1C --file Movecraft-WorldGuard/pom.xml
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Stage jar
       run: mkdir staging && cp Movecraft-WorldGuard/target/Movecraft-WorldGuard.jar staging
