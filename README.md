@@ -9,7 +9,7 @@ The `1.10.2` branch is coded for Movecraft 7.x and WorldGuard v6.1.x for 1.10.2.
 
 The `1.12.2` branch is coded for Movecraft 7.x and WorldGuard v6.2.x for 1.12.2.
 
-The `main` branch is coded for Movecraft 8.x and WorldGuard v7.x for 1.14+.
+The `main` branch is coded for Movecraft 8.x and WorldGuard v7.x for 1.14.4 to 1.17.1.
 
 ## Download
 
@@ -18,11 +18,7 @@ Devevlopment builds can be found on the [Releases page](https://github.com/APDev
 Stable builds can be found on [our SpigotMC page](https://www.spigotmc.org/resources/movecraft-worldguard.90428/).
 
 ## Building
-This plugin requires that the user setup and build their [Movecraft](https://github.com/APDevTeam/Movecraft) development environment, and then clone this into the same folder as your Movecraft development environment such that Movecraft-WorldGuard and Movecraft are contained in the same folder.  This plugin also requires you to build the latest version of 1.14.4 using build tools.
-
-```
-java -jar BuildTools.jar --rev 1.14.4
-```
+This plugin requires that the user setup and build their [Movecraft-Combat](https://github.com/TylerS1066/Movecraft-Combat) development environment, and then clone this into the same folder as your Movecraft-Combat development environment such that Movecraft-WorldGuard and Movecraft-Combat are contained in the same folder.
 
 Then, run the following to build Movecraft-WorldGuard through `maven`.
 ```
