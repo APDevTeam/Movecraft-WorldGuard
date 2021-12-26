@@ -9,7 +9,7 @@ The `1.10.2` branch is coded for Movecraft 7.x and WorldGuard v6.1.x for 1.10.2.
 
 The `1.12.2` branch is coded for Movecraft 7.x and WorldGuard v6.2.x for 1.12.2.
 
-The `main` branch is coded for Movecraft 8.x and WorldGuard v7.x for 1.14.4 to 1.17.1.
+The `main` branch is coded for Movecraft 8.x and WorldGuard v7.x for 1.14.4 to 1.18.1.
 
 ## Download
 
