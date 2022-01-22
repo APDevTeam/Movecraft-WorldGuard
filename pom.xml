@@ -13,7 +13,7 @@
     <description>WorldGuard integration with Movecraft</description>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>13</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <url>https://github.com/APDevTeam/Movecraft-WorldGuard</url>
@@ -129,7 +129,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations-java5</artifactId>
-            <version>RELEASE</version>
+            <version>22.0.0</version>
         </dependency>
     </dependencies>
 </project>
