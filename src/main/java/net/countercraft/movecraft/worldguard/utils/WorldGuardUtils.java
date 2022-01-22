@@ -9,28 +9,44 @@ import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.util.hitboxes.HitBox;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
+import java.util.UUID;
 
 public class WorldGuardUtils {
     private WorldGuardPlugin wgPlugin;
 
     public boolean init(Plugin plugin) {
-        if(plugin == null || !(plugin instanceof  WorldGuardPlugin)) {
+        if(plugin == null || !(plugin instanceof WorldGuardPlugin)) {
             return false;
         }
         wgPlugin = (WorldGuardPlugin) plugin;
+
+        FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
+        registry.register(CustomFlags.ALLOW_TRANSLATE);
+        registry.register(CustomFlags.ALLOW_ROTATE);
+        registry.register(CustomFlags.ALLOW_COMBAT_RELEASE);
+        //registry.register(CustomFlags.ALLOW_CRAFT_SINK);
+        registry.register(CustomFlags.ALLOW_CRAFT_PILOT);
         return true;
     }
 
@@ -39,37 +55,17 @@ public class WorldGuardUtils {
      * Internal Features
      */
 
-    public boolean canTranslate(Player p, World w, HitBox hitbox) {
-        // TODO: Translate flags
-        return canBuild(p, w, hitbox);
-    }
-
-    public boolean canTranslate(Player p, Location loc) {
-        // TODO: Translate flags
-        return canBuild(p, loc);
-    }
-
-    public boolean canRotate(Player p, World w, HitBox hitbox) {
-        // TODO: Rotate flags
-        return canBuild(p, w, hitbox);
-    }
-
-    public boolean canRotate(Player p, Location loc) {
-        // TODO: Translate flags
-        return canBuild(p, loc);
-    }
-
-    private boolean canBuild(Player p, World w, HitBox hitbox) {
-        for(MovecraftLocation ml : getHitboxCorners(hitbox)) {
-            if(!canBuild(p, ml.toBukkit(w)))
+    public boolean allowedTo(Player p, World w, HitBox hitBox, StateFlag flag) {
+        for(MovecraftLocation ml : getHitboxCorners(hitBox)) {
+            if(!allowedTo(p, ml.toBukkit(w), flag))
                 return false;
         }
         return true;
     }
 
-    private boolean canBuild(Player p, Location loc) {
+    public boolean allowedTo(Player p, Location loc, StateFlag flag) {
         RegionQuery query = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
-        return query.queryState(BukkitAdapter.adapt(loc), wgPlugin.wrapPlayer(p), Flags.BUILD) == StateFlag.State.ALLOW;
+        return query.queryState(BukkitAdapter.adapt(loc), wgPlugin.wrapPlayer(p), flag) == StateFlag.State.ALLOW;
     }
 
     public boolean isPVPAllowed(World w, HitBox hitBox) {
@@ -378,17 +374,17 @@ public class WorldGuardUtils {
     }
 
     /**
-     *
      * @param hitbox HitBox to check
      * @return ~27 "corners" of the hitbox.  This drastically reduces the workload for checking a large craft's hitbox.
-     * For small crafts, this may be smaller than 27.
+     * For tiny crafts, this may be smaller than 27 due to overlaps.
      */
     @NotNull
-    private HashSet<MovecraftLocation> getHitboxCorners(@NotNull HitBox hitbox) {
-        HashSet<MovecraftLocation> corners = new HashSet<>();
-        for(int x : new int[]{hitbox.getMinX(), hitbox.getMidPoint().getX(), hitbox.getMaxX()}) {
-            for(int y : new int[]{hitbox.getMinY(), hitbox.getMidPoint().getY(), hitbox.getMaxY()}) {
-                for(int z : new int[]{hitbox.getMinZ(), hitbox.getMidPoint().getZ(), hitbox.getMaxZ()}) {
+    private Set<MovecraftLocation> getHitboxCorners(@NotNull HitBox hitbox) {
+        Set<MovecraftLocation> corners = new HashSet<>();
+        MovecraftLocation midPoint = hitbox.getMidPoint();
+        for (int x : new int[]{hitbox.getMinX(), midPoint.getX(), hitbox.getMaxX()}) {
+            for (int y : new int[]{hitbox.getMinY(), midPoint.getY(), hitbox.getMaxY()}) {
+                for (int z : new int[]{hitbox.getMinZ(), midPoint.getZ(), hitbox.getMaxZ()}) {
                     corners.add(new MovecraftLocation(x, y, z));
                 }
             }
