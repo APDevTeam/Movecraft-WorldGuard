@@ -18,7 +18,10 @@ public final class MovecraftWorldGuard extends JavaPlugin {
         return instance;
     }
 
+
+
     private WorldGuardUtils wgUtils;
+
 
     @Override
     public void onEnable() {
@@ -38,18 +41,19 @@ public final class MovecraftWorldGuard extends JavaPlugin {
 
         Plugin wgPlugin = getServer().getPluginManager().getPlugin("WorldGuard");
         wgUtils = new WorldGuardUtils();
-        if(!wgUtils.init(wgPlugin)) {
+        if(wgPlugin == null || !wgUtils.init(wgPlugin)) {
             getLogger().log(Level.SEVERE, "Movecraft-WorldGuard did not find a compatible version of WorldGuard. Shutting down.");
             getServer().shutdown();
         }
         getLogger().log(Level.INFO, "Found a compatible version of WorldGuard. Enabling WorldGuard integration.");
 
         Plugin movecraftCombat = getServer().getPluginManager().getPlugin("Movecraft-Combat");
-        if(movecraftCombat != null && movecraftCombat instanceof MovecraftCombat) {
+        if(movecraftCombat instanceof MovecraftCombat) {
             getServer().getPluginManager().registerEvents(new CombatReleaseListener(), this);
             getLogger().info("Found a compatible version of Movecraft-Combat. Enabling Movecraft-Combat integration.");
         }
 
+        getServer().getPluginManager().registerEvents(new CraftDetectListener(), this);
         getServer().getPluginManager().registerEvents(new CraftRotateListener(), this);
         getServer().getPluginManager().registerEvents(new CraftSinkListener(), this);
         getServer().getPluginManager().registerEvents(new CraftTranslateListener(), this);
