@@ -1,12 +1,13 @@
 package net.countercraft.movecraft.worldguard.listener;
 
 import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.flags.StateFlag;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.PilotedCraft;
 import net.countercraft.movecraft.events.CraftTranslateEvent;
+import net.countercraft.movecraft.util.hitboxes.HitBox;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
-import net.countercraft.movecraft.worldguard.config.Config;
 import net.countercraft.movecraft.worldguard.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.utils.CustomFlags;
 import net.countercraft.movecraft.worldguard.utils.WorldGuardUtils;
@@ -22,22 +23,23 @@ public class CraftTranslateListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onCraftTranslate(@NotNull CraftTranslateEvent e) {
         Craft craft = e.getCraft();
-        if(!(craft instanceof PilotedCraft) || e.getNewHitBox().isEmpty())
+        HitBox hitBox = craft.getHitBox();
+        if(!(craft instanceof PilotedCraft) || hitBox.isEmpty())
             return;
 
         WorldGuardUtils wgUtils = MovecraftWorldGuard.getInstance().getWGUtils();
         World w = craft.getWorld();
         Player p = ((PilotedCraft) craft).getPilot();
-        boolean canBuild = wgUtils.allowedTo(p, w, e.getNewHitBox(), Flags.BUILD);
-        boolean canTranslate = wgUtils.allowedTo(p, w, e.getNewHitBox(), CustomFlags.ALLOW_TRANSLATE);
-        if(canBuild || canTranslate)
+        if(wgUtils.allowedTo(p, w, e.getNewHitBox(), CustomFlags.ALLOW_TRANSLATE))
             return; // return if the player is allowed to translate in the new location
 
         // Find the first offending location and notify the player
-        MovecraftLocation location = e.getNewHitBox().getMidPoint();
-        for(MovecraftLocation ml : e.getNewHitBox()) {
+        boolean canBuild = true;
+        MovecraftLocation location = hitBox.getMidPoint();
+        for(MovecraftLocation ml : hitBox) {
             Location loc = ml.toBukkit(w);
             if(!wgUtils.allowedTo(p, loc, Flags.BUILD)) {
+                canBuild = false;
                 location = ml;
                 break;
             }
@@ -48,6 +50,12 @@ public class CraftTranslateListener implements Listener {
         }
 
         e.setCancelled(true);
-        e.setFailMessage(String.format(I18nSupport.getInternationalisedString( "Translation - WorldGuard - Not Permitted To Build" ) + " @ %d,%d,%d", location.getX(), location.getY(), location.getZ()));
+        String message;
+        if(!canBuild)
+            message = I18nSupport.getInternationalisedString("Translation - WorldGuard - Not Permitted To Build");
+        else
+            message = I18nSupport.getInternationalisedString("CustomFlags - Translation Failed");
+
+        e.setFailMessage(message + String.format(" @ %d,%d,%d", location.getX(), location.getY(), location.getZ()));
     }
 }
