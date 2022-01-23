@@ -43,9 +43,6 @@ public final class MovecraftWorldGuard extends JavaPlugin {
             getServer().shutdown();
         }
         getLogger().log(Level.INFO, "Found a compatible version of WorldGuard. Enabling WorldGuard integration.");
-        Config.WorldGuardBlockMoveOnBuildPerm = getConfig().getBoolean("WorldGuardBlockMoveOnBuildPerm", true);
-        Config.WorldGuardBlockSinkOnPVPPerm = getConfig().getBoolean("WorldGuardBlockSinkOnPVPPerm", true);
-        getLogger().log(Level.INFO, "Settings: WorldGuardBlockMoveOnBuildPerm - {0}, WorldGuardBlockSinkOnPVPPerm - {1}", new Object[]{Config.WorldGuardBlockMoveOnBuildPerm, Config.WorldGuardBlockSinkOnPVPPerm});
 
         Plugin movecraftCombat = getServer().getPluginManager().getPlugin("Movecraft-Combat");
         if(movecraftCombat != null && movecraftCombat instanceof MovecraftCombat) {
