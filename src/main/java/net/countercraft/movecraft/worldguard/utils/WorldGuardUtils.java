@@ -35,18 +35,18 @@ import java.util.UUID;
 public class WorldGuardUtils {
     private WorldGuardPlugin wgPlugin;
 
-    public boolean init(Plugin plugin) {
-        if(plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+    public boolean init(@NotNull Plugin plugin) {
+        if(!(plugin instanceof WorldGuardPlugin))
             return false;
-        }
+
         wgPlugin = (WorldGuardPlugin) plugin;
 
         FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
-        registry.register(CustomFlags.ALLOW_TRANSLATE);
-        registry.register(CustomFlags.ALLOW_ROTATE);
         registry.register(CustomFlags.ALLOW_COMBAT_RELEASE);
-        //registry.register(CustomFlags.ALLOW_CRAFT_SINK);
         registry.register(CustomFlags.ALLOW_CRAFT_PILOT);
+        registry.register(CustomFlags.ALLOW_CRAFT_SINK);
+        registry.register(CustomFlags.ALLOW_ROTATE);
+        registry.register(CustomFlags.ALLOW_TRANSLATE);
         return true;
     }
 
@@ -68,30 +68,21 @@ public class WorldGuardUtils {
         return query.queryState(BukkitAdapter.adapt(loc), wgPlugin.wrapPlayer(p), flag) == StateFlag.State.ALLOW;
     }
 
-    public boolean isPVPAllowed(World w, HitBox hitBox) {
+    public boolean isFlagDenied(World w, HitBox hitBox, StateFlag flag) {
         for(MovecraftLocation ml : getHitboxCorners(hitBox)) {
-            if(!isPVPAllowed(ml.toBukkit(w)))
+            if(!isFlagDenied(ml.toBukkit(w), flag))
                 return false;
         }
         return true;
     }
 
-    public boolean isPVPAllowed(Location loc) {
+    public boolean isFlagDenied(Location loc, StateFlag flag) {
         ApplicableRegionSet set = getApplicableRegions(loc);
         for(ProtectedRegion r : set) {
-            if(r.getFlag(Flags.PVP) == StateFlag.State.DENY)
-                return false;
+            if(r.getFlag(flag) == StateFlag.State.DENY)
+                return true;
         }
-        return true;
-    }
-
-    public boolean isOtherExplosionAllowed(Location loc) {
-        ApplicableRegionSet set = getApplicableRegions(loc);
-        for(ProtectedRegion r : set) {
-            if(r.getFlag(Flags.OTHER_EXPLOSION) == StateFlag.State.DENY)
-                return false;
-        }
-        return true;
+        return false;
     }
 
 
@@ -101,11 +92,8 @@ public class WorldGuardUtils {
 
     public boolean isTNTAllowed(World w, HitBox hitBox) {
         for(MovecraftLocation ml : getHitboxCorners(hitBox)) {
-            ApplicableRegionSet set = getApplicableRegions(ml.toBukkit(w));
-            for(ProtectedRegion r : set) {
-                if(r.getFlag(Flags.TNT) == StateFlag.State.DENY)
-                    return false;
-            }
+            if(!isFlagDenied(ml.toBukkit(w), Flags.TNT))
+                return false;
         }
         return true;
     }
