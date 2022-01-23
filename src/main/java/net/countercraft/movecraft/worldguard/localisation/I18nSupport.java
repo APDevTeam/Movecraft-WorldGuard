@@ -13,7 +13,8 @@ public class I18nSupport {
     public static void init() {
         langFile = new Properties();
 
-        File langDirectory = new File(MovecraftWorldGuard.getInstance().getDataFolder().getAbsolutePath() + "/localisation");
+        File langDirectory = new File(
+                MovecraftWorldGuard.getInstance().getDataFolder().getAbsolutePath() + "/localisation");
         if (!langDirectory.exists()) {
             langDirectory.mkdirs();
         }
@@ -21,8 +22,10 @@ public class I18nSupport {
         InputStream stream = null;
 
         try {
-            stream = new FileInputStream(langDirectory.getAbsolutePath()+"/movecraftworldguardlang_" + Config.Locale + ".properties");
-        } catch (FileNotFoundException e) {
+            stream = new FileInputStream(
+                    langDirectory.getAbsolutePath() + "/movecraftworldguardlang_" + Config.Locale + ".properties");
+        }
+        catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -33,17 +36,17 @@ public class I18nSupport {
 
         try {
             langFile.load(stream);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public static String getInternationalisedString(String key) {
         String ret = langFile.getProperty(key);
-        if (ret != null) {
+        if (ret != null)
             return ret;
-        } else {
+        else
             return key;
-        }
     }
 }

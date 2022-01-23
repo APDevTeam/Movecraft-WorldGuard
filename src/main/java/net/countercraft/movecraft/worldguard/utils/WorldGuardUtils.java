@@ -36,7 +36,7 @@ public class WorldGuardUtils {
     private WorldGuardPlugin wgPlugin;
 
     public boolean init(@NotNull Plugin plugin) {
-        if(!(plugin instanceof WorldGuardPlugin))
+        if (!(plugin instanceof WorldGuardPlugin))
             return false;
 
         wgPlugin = (WorldGuardPlugin) plugin;
@@ -50,14 +50,13 @@ public class WorldGuardUtils {
         return true;
     }
 
-
     /**
      * Internal Features
      */
 
     public boolean allowedTo(Player p, World w, HitBox hitBox, StateFlag flag) {
-        for(MovecraftLocation ml : getHitboxCorners(hitBox)) {
-            if(!allowedTo(p, ml.toBukkit(w), flag))
+        for (MovecraftLocation ml : getHitboxCorners(hitBox)) {
+            if (!allowedTo(p, ml.toBukkit(w), flag))
                 return false;
         }
         return true;
@@ -69,8 +68,8 @@ public class WorldGuardUtils {
     }
 
     public boolean isFlagDenied(World w, HitBox hitBox, StateFlag flag) {
-        for(MovecraftLocation ml : getHitboxCorners(hitBox)) {
-            if(!isFlagDenied(ml.toBukkit(w), flag))
+        for (MovecraftLocation ml : getHitboxCorners(hitBox)) {
+            if (!isFlagDenied(ml.toBukkit(w), flag))
                 return false;
         }
         return true;
@@ -78,26 +77,24 @@ public class WorldGuardUtils {
 
     public boolean isFlagDenied(Location loc, StateFlag flag) {
         ApplicableRegionSet set = getApplicableRegions(loc);
-        for(ProtectedRegion r : set) {
-            if(r.getFlag(flag) == StateFlag.State.DENY)
+        for (ProtectedRegion r : set) {
+            if (r.getFlag(flag) == StateFlag.State.DENY)
                 return true;
         }
         return false;
     }
-
 
     /**
      * Movecraft-Combat Features
      */
 
     public boolean isTNTAllowed(World w, HitBox hitBox) {
-        for(MovecraftLocation ml : getHitboxCorners(hitBox)) {
-            if(!isFlagDenied(ml.toBukkit(w), Flags.TNT))
+        for (MovecraftLocation ml : getHitboxCorners(hitBox)) {
+            if (!isFlagDenied(ml.toBukkit(w), Flags.TNT))
                 return false;
         }
         return true;
     }
-
 
     /**
      * Movecraft-Warfare Features
@@ -107,11 +104,11 @@ public class WorldGuardUtils {
 
     public boolean craftFullyInRegion(String regionName, World w, Craft craft) {
         ProtectedRegion r = getRegion(regionName, w);
-        if(r == null)
+        if (r == null)
             return false;
 
-        for(MovecraftLocation ml : getHitboxCorners(craft.getHitBox())) {
-            if(!r.contains(ml.getX(), ml.getY(), ml.getZ()))
+        for (MovecraftLocation ml : getHitboxCorners(craft.getHitBox())) {
+            if (!r.contains(ml.getX(), ml.getY(), ml.getZ()))
                 return false;
         }
         return true;
@@ -119,7 +116,7 @@ public class WorldGuardUtils {
 
     public void clearAndSetOwnership(String regionName, World w, UUID owner) {
         ProtectedRegion region = getRegion(regionName, w);
-        if(region == null)
+        if (region == null)
             return;
 
         DefaultDomain newOwners = new DefaultDomain();
@@ -131,7 +128,7 @@ public class WorldGuardUtils {
     public Set<String> getRegions(Location loc) {
         ApplicableRegionSet regionSet = getApplicableRegions(loc);
         HashSet<String> stringSet = new HashSet<>();
-        for(ProtectedRegion r : regionSet) {
+        for (ProtectedRegion r : regionSet) {
             stringSet.add(r.getId());
         }
         return stringSet;
@@ -149,12 +146,13 @@ public class WorldGuardUtils {
 
     public boolean ownsAssaultableRegion(Player p) {
         LocalPlayer lp = wgPlugin.wrapPlayer(p);
-        RegionManager manager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(p.getWorld()));
-        if(manager == null)
+        RegionManager manager = WorldGuard.getInstance().getPlatform().getRegionContainer()
+                .get(BukkitAdapter.adapt(p.getWorld()));
+        if (manager == null)
             return false;
 
-        for(ProtectedRegion r : manager.getRegions().values()) {
-            if(r.isOwner(lp) && r.getFlag(Flags.TNT) == StateFlag.State.DENY)
+        for (ProtectedRegion r : manager.getRegions().values()) {
+            if (r.isOwner(lp) && r.getFlag(Flags.TNT) == StateFlag.State.DENY)
                 return true;
         }
         return false;
@@ -162,11 +160,11 @@ public class WorldGuardUtils {
 
     @Nullable
     public String getAssaultableRegion(Location loc, HashSet<String> exclusions) {
-        for(ProtectedRegion r : getApplicableRegions(loc)) {
-            if(r.getFlag(Flags.TNT) != StateFlag.State.DENY || r.getOwners().size() == 0)
+        for (ProtectedRegion r : getApplicableRegions(loc)) {
+            if (r.getFlag(Flags.TNT) != StateFlag.State.DENY || r.getOwners().size() == 0)
                 continue;
 
-            if(exclusions.contains(r.getId().toUpperCase()))
+            if (exclusions.contains(r.getId().toUpperCase()))
                 continue;
 
             return r.getId();
@@ -177,7 +175,7 @@ public class WorldGuardUtils {
     @Nullable
     public Set<UUID> getUUIDOwners(String regionName, World w) {
         ProtectedRegion r = getRegion(regionName, w);
-        if(r == null)
+        if (r == null)
             return null;
 
         return r.getOwners().getUniqueIds();
@@ -186,7 +184,7 @@ public class WorldGuardUtils {
     @Nullable
     public Set<UUID> getUUIDMembers(String regionName, World w) {
         ProtectedRegion r = getRegion(regionName, w);
-        if(r == null)
+        if (r == null)
             return null;
 
         return r.getMembers().getUniqueIds();
@@ -194,7 +192,7 @@ public class WorldGuardUtils {
 
     public void setTNTAllow(String regionName, World w) {
         ProtectedRegion r = getRegion(regionName, w);
-        if(r == null)
+        if (r == null)
             return;
 
         r.setFlag(Flags.TNT, StateFlag.State.ALLOW);
@@ -202,7 +200,7 @@ public class WorldGuardUtils {
 
     public void setTNTDeny(String regionName, World w) {
         ProtectedRegion r = getRegion(regionName, w);
-        if(r == null)
+        if (r == null)
             return;
 
         r.setFlag(Flags.TNT, StateFlag.State.DENY);
@@ -210,7 +208,7 @@ public class WorldGuardUtils {
 
     public void clearOwners(String regionName, World w) {
         ProtectedRegion r = getRegion(regionName, w);
-        if(r == null)
+        if (r == null)
             return;
 
         r.getOwners().clear();
@@ -219,25 +217,25 @@ public class WorldGuardUtils {
     @Nullable
     public String getRegionOwnerList(String regionName, World w) {
         ProtectedRegion r = getRegion(regionName, w);
-        if(r == null)
+        if (r == null)
             return null;
 
         StringBuilder output = new StringBuilder();
         boolean first = true;
-        for(UUID uuid : r.getOwners().getUniqueIds()) {
-            if(!first)
+        for (UUID uuid : r.getOwners().getUniqueIds()) {
+            if (!first)
                 output.append(", ");
             else
                 first = false;
 
             OfflinePlayer ofp = Bukkit.getOfflinePlayer(uuid);
-            if(ofp == null)
+            if (ofp == null)
                 output.append(uuid);
             else
                 output.append(ofp.getName());
         }
-        for(String player : r.getOwners().getPlayers()) {
-            if(!first)
+        for (String player : r.getOwners().getPlayers()) {
+            if (!first)
                 output.append(", ");
             else
                 first = false;
@@ -249,18 +247,17 @@ public class WorldGuardUtils {
 
     public boolean addOwners(String regionName, World w, Set<String> owners) {
         ProtectedRegion r = getRegion(regionName, w);
-        if(r == null)
+        if (r == null)
             return false;
 
         DefaultDomain regionOwners = r.getOwners();
 
-        for(String ownerName : owners) {
-            if(ownerName.length() > 16) {
+        for (String ownerName : owners) {
+            if (ownerName.length() > 16) {
                 regionOwners.addPlayer(UUID.fromString(ownerName));
-            }
-            else {
+            } else {
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(ownerName);
-                if(offlinePlayer == null)
+                if (offlinePlayer == null)
                     continue;
 
                 regionOwners.addPlayer(offlinePlayer.getUniqueId());
@@ -271,7 +268,7 @@ public class WorldGuardUtils {
 
     public boolean isMember(String regionName, World w, Player p) {
         ProtectedRegion r = getRegion(regionName, w);
-        if(r == null)
+        if (r == null)
             return false;
 
         LocalPlayer lp = wgPlugin.wrapPlayer(p);
@@ -280,7 +277,7 @@ public class WorldGuardUtils {
 
     public boolean isTNTDenied(String regionName, World w) {
         ProtectedRegion r = getRegion(regionName, w);
-        if(r == null)
+        if (r == null)
             return false;
 
         return r.getFlag(Flags.TNT) == StateFlag.State.DENY;
@@ -289,7 +286,7 @@ public class WorldGuardUtils {
     @Nullable
     public MovecraftLocation getMinLocation(String regionName, World w) {
         ProtectedRegion r = getRegion(regionName, w);
-        if(r == null)
+        if (r == null)
             return null;
 
         return vectorToMovecraftLocation(r.getMinimumPoint());
@@ -298,7 +295,7 @@ public class WorldGuardUtils {
     @Nullable
     public MovecraftLocation getMaxLocation(String regionName, World w) {
         ProtectedRegion r = getRegion(regionName, w);
-        if(r == null)
+        if (r == null)
             return null;
 
         return vectorToMovecraftLocation(r.getMaximumPoint());
@@ -307,12 +304,14 @@ public class WorldGuardUtils {
     @Nullable
     public Queue<Chunk> getChunksInRegion(String regionName, World w) {
         ProtectedRegion region = getRegion(regionName, w);
-        if(region == null)
+        if (region == null)
             return null;
 
         Queue<Chunk> chunks = new LinkedList<>();
-        for(int x = (int) Math.floor(region.getMinimumPoint().getBlockX() / 16.0); x < Math.floor(region.getMaximumPoint().getBlockX() / 16.0) + 1; x++) {
-            for(int z = (int) Math.floor(region.getMinimumPoint().getBlockZ() / 16.0); z < Math.floor(region.getMaximumPoint().getBlockZ() / 16.0) + 1; z++) {
+        for (int x = (int) Math.floor(region.getMinimumPoint().getBlockX() / 16.0); x < Math
+                .floor(region.getMaximumPoint().getBlockX() / 16.0) + 1; x++) {
+            for (int z = (int) Math.floor(region.getMinimumPoint().getBlockZ() / 16.0); z < Math
+                    .floor(region.getMaximumPoint().getBlockZ() / 16.0) + 1; z++) {
                 chunks.add(w.getChunkAt(x, z));
             }
         }
@@ -322,7 +321,7 @@ public class WorldGuardUtils {
     @Nullable
     public IsInRegion getIsInRegion(String regionName, World w) {
         ProtectedRegion r = getRegion(regionName, w);
-        if(r == null)
+        if (r == null)
             return null;
 
         return new IsInRegion(r);
@@ -330,12 +329,11 @@ public class WorldGuardUtils {
 
     public boolean regionContains(String regionName, @NotNull Location l) {
         ProtectedRegion r = getRegion(regionName, l.getWorld());
-        if(r == null)
+        if (r == null)
             return false;
 
         return r.contains(l.getBlockX(), l.getBlockY(), l.getBlockZ());
     }
-
 
     /**
      * Generic features
@@ -344,7 +342,7 @@ public class WorldGuardUtils {
     @Nullable
     private ProtectedRegion getRegion(String regionName, World w) {
         RegionManager regions = WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(w));
-        if(regions == null)
+        if (regions == null)
             return null;
 
         return regions.getRegion(regionName);
@@ -363,16 +361,17 @@ public class WorldGuardUtils {
 
     /**
      * @param hitbox HitBox to check
-     * @return ~27 "corners" of the hitbox.  This drastically reduces the workload for checking a large craft's hitbox.
-     * For tiny crafts, this may be smaller than 27 due to overlaps.
+     * @return ~27 "corners" of the hitbox. This drastically reduces the workload
+     *         for checking a large craft's hitbox.
+     *         For tiny crafts, this may be smaller than 27 due to overlaps.
      */
     @NotNull
     private Set<MovecraftLocation> getHitboxCorners(@NotNull HitBox hitbox) {
         Set<MovecraftLocation> corners = new HashSet<>();
         MovecraftLocation midPoint = hitbox.getMidPoint();
-        for (int x : new int[]{hitbox.getMinX(), midPoint.getX(), hitbox.getMaxX()}) {
-            for (int y : new int[]{hitbox.getMinY(), midPoint.getY(), hitbox.getMaxY()}) {
-                for (int z : new int[]{hitbox.getMinZ(), midPoint.getZ(), hitbox.getMaxZ()}) {
+        for (int x : new int[] { hitbox.getMinX(), midPoint.getX(), hitbox.getMaxX() }) {
+            for (int y : new int[] { hitbox.getMinY(), midPoint.getY(), hitbox.getMaxY() }) {
+                for (int z : new int[] { hitbox.getMinZ(), midPoint.getZ(), hitbox.getMaxZ() }) {
                     corners.add(new MovecraftLocation(x, y, z));
                 }
             }

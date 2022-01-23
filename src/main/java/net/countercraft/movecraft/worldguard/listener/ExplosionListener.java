@@ -9,7 +9,8 @@ import org.bukkit.event.Listener;
 public class ExplosionListener implements Listener {
     @EventHandler
     public void onExplosion(ExplosionEvent e) {
-        if(!MovecraftWorldGuard.getInstance().getWGUtils().isFlagDenied(e.getExplosionLocation(), Flags.OTHER_EXPLOSION))
+        if (!MovecraftWorldGuard.getInstance().getWGUtils().isFlagDenied(e.getExplosionLocation(),
+                Flags.OTHER_EXPLOSION))
             return;
 
         e.setCancelled(true);

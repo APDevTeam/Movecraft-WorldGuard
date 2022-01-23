@@ -1,7 +1,6 @@
 package net.countercraft.movecraft.worldguard.listener;
 
 import com.sk89q.worldguard.protection.flags.Flags;
-import com.sk89q.worldguard.protection.flags.StateFlag;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.PilotedCraft;
@@ -24,26 +23,26 @@ public class CraftDetectListener implements Listener {
     public void onCraftPilot(@NotNull CraftDetectEvent e) {
         Craft craft = e.getCraft();
         HitBox hitBox = craft.getHitBox();
-        if(!(craft instanceof PilotedCraft) || hitBox.isEmpty())
+        if (!(craft instanceof PilotedCraft) || hitBox.isEmpty())
             return;
 
         WorldGuardUtils wgUtils = MovecraftWorldGuard.getInstance().getWGUtils();
         World w = craft.getWorld();
         Player p = ((PilotedCraft) craft).getPilot();
-        if(wgUtils.allowedTo(p, w, hitBox, CustomFlags.ALLOW_CRAFT_PILOT))
+        if (wgUtils.allowedTo(p, w, hitBox, CustomFlags.ALLOW_CRAFT_PILOT))
             return; // return if the player is allowed to pilot in the new location
 
         // Find the first offending location and notify the player
         boolean canBuild = true;
         MovecraftLocation location = hitBox.getMidPoint();
-        for(MovecraftLocation ml : hitBox) {
+        for (MovecraftLocation ml : hitBox) {
             Location loc = ml.toBukkit(w);
-            if(!wgUtils.allowedTo(p, loc, Flags.BUILD)) {
+            if (!wgUtils.allowedTo(p, loc, Flags.BUILD)) {
                 canBuild = false;
                 location = ml;
                 break;
             }
-            if(!wgUtils.allowedTo(p, loc, CustomFlags.ALLOW_CRAFT_PILOT)) {
+            if (!wgUtils.allowedTo(p, loc, CustomFlags.ALLOW_CRAFT_PILOT)) {
                 location = ml;
                 break;
             }
@@ -51,7 +50,7 @@ public class CraftDetectListener implements Listener {
 
         e.setCancelled(true);
         String message;
-        if(!canBuild)
+        if (!canBuild)
             message = I18nSupport.getInternationalisedString("Detection - WorldGuard - Not Permitted To Build");
         else
             message = I18nSupport.getInternationalisedString("CustomFlags - Detection Failed");

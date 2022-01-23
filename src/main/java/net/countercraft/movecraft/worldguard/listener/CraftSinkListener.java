@@ -6,7 +6,6 @@ import net.countercraft.movecraft.craft.PilotedCraft;
 import net.countercraft.movecraft.events.CraftSinkEvent;
 import net.countercraft.movecraft.util.hitboxes.HitBox;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
-import net.countercraft.movecraft.worldguard.config.Config;
 import net.countercraft.movecraft.worldguard.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.utils.CustomFlags;
 import net.countercraft.movecraft.worldguard.utils.WorldGuardUtils;
@@ -22,19 +21,21 @@ public class CraftSinkListener implements Listener {
     public void onCraftSink(@NotNull CraftSinkEvent e) {
         Craft craft = e.getCraft();
         HitBox hitBox = craft.getHitBox();
-        if(!(craft instanceof PilotedCraft) || hitBox.isEmpty())
+        if (!(craft instanceof PilotedCraft) || hitBox.isEmpty())
             return;
 
         WorldGuardUtils wgUtils = MovecraftWorldGuard.getInstance().getWGUtils();
         World w = craft.getWorld();
-        if(!wgUtils.isFlagDenied(w, hitBox, CustomFlags.ALLOW_CRAFT_SINK))
+        if (!wgUtils.isFlagDenied(w, hitBox, CustomFlags.ALLOW_CRAFT_SINK))
             return; // Craft is allowed to sink
 
         e.setCancelled(true);
         Player p = ((PilotedCraft) craft).getPilot();
-        if(wgUtils.isFlagDenied(w, hitBox, Flags.PVP))
-            p.sendMessage(I18nSupport.getInternationalisedString("Player - Craft should sink but PVP is not allowed in this WorldGuard region"));
+        if (wgUtils.isFlagDenied(w, hitBox, Flags.PVP))
+            p.sendMessage(I18nSupport.getInternationalisedString(
+                    "Player - Craft should sink but PVP is not allowed in this WorldGuard region"));
         else
-            p.sendMessage(I18nSupport.getInternationalisedString("CustomFlags - Sinking a craft is not allowed in this WorldGuard region"));
+            p.sendMessage(I18nSupport.getInternationalisedString(
+                    "CustomFlags - Sinking a craft is not allowed in this WorldGuard region"));
     }
 }
