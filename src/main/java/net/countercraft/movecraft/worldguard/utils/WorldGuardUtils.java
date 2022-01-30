@@ -87,7 +87,11 @@ public class WorldGuardUtils {
     @NotNull
     public State getState(@Nullable Player p, @NotNull Location loc, @NotNull StateFlag flag) {
         RegionQuery query = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
-        StateFlag.State state = query.queryState(BukkitAdapter.adapt(loc), wgPlugin.wrapPlayer(p), flag);
+        LocalPlayer localPlayer = null;
+        if (p != null) {
+            localPlayer = wgPlugin.wrapPlayer(p);
+        }
+        StateFlag.State state = query.queryState(BukkitAdapter.adapt(loc), localPlayer, flag);
         if (state == null)
             return State.NONE;
         switch (state) {
