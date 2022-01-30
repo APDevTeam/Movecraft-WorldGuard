@@ -24,6 +24,11 @@ public final class MovecraftWorldGuard extends JavaPlugin {
 
 
     @Override
+    public void onLoad() {
+        CustomFlags.register();
+    }
+
+    @Override
     public void onEnable() {
         instance = this;
 
@@ -44,6 +49,7 @@ public final class MovecraftWorldGuard extends JavaPlugin {
         if(wgPlugin == null || !wgUtils.init(wgPlugin)) {
             getLogger().log(Level.SEVERE, "Movecraft-WorldGuard did not find a compatible version of WorldGuard. Shutting down.");
             getServer().shutdown();
+            return;
         }
         getLogger().log(Level.INFO, "Found a compatible version of WorldGuard. Enabling WorldGuard integration.");
 
