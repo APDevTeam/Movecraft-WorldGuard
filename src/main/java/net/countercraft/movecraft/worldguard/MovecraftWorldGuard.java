@@ -18,7 +18,15 @@ public final class MovecraftWorldGuard extends JavaPlugin {
         return instance;
     }
 
+
+
     private WorldGuardUtils wgUtils;
+
+
+    @Override
+    public void onLoad() {
+        CustomFlags.register();
+    }
 
     @Override
     public void onEnable() {
@@ -38,21 +46,20 @@ public final class MovecraftWorldGuard extends JavaPlugin {
 
         Plugin wgPlugin = getServer().getPluginManager().getPlugin("WorldGuard");
         wgUtils = new WorldGuardUtils();
-        if(!wgUtils.init(wgPlugin)) {
-            getLogger().log(Level.SEVERE, I18nSupport.getInternationalisedString("Startup - WG Not Found"));
+        if(wgPlugin == null || !wgUtils.init(wgPlugin)) {
+            getLogger().log(Level.SEVERE, "Movecraft-WorldGuard did not find a compatible version of WorldGuard. Shutting down.");
             getServer().shutdown();
+            return;
         }
-        getLogger().log(Level.INFO, I18nSupport.getInternationalisedString("Startup - WG Found"));
-        Config.WorldGuardBlockMoveOnBuildPerm = getConfig().getBoolean("WorldGuardBlockMoveOnBuildPerm", true);
-        Config.WorldGuardBlockSinkOnPVPPerm = getConfig().getBoolean("WorldGuardBlockSinkOnPVPPerm", true);
-        getLogger().log(Level.INFO, "Settings: WorldGuardBlockMoveOnBuildPerm - {0}, WorldGuardBlockSinkOnPVPPerm - {1}", new Object[]{Config.WorldGuardBlockMoveOnBuildPerm, Config.WorldGuardBlockSinkOnPVPPerm});
+        getLogger().log(Level.INFO, "Found a compatible version of WorldGuard. Enabling WorldGuard integration.");
 
         Plugin movecraftCombat = getServer().getPluginManager().getPlugin("Movecraft-Combat");
-        if(movecraftCombat != null && movecraftCombat instanceof MovecraftCombat) {
+        if(movecraftCombat instanceof MovecraftCombat) {
             getServer().getPluginManager().registerEvents(new CombatReleaseListener(), this);
-            getLogger().info(I18nSupport.getInternationalisedString("Startup - Movecraft-Combat Found"));
+            getLogger().info("Found a compatible version of Movecraft-Combat. Enabling Movecraft-Combat integration.");
         }
 
+        getServer().getPluginManager().registerEvents(new CraftDetectListener(), this);
         getServer().getPluginManager().registerEvents(new CraftRotateListener(), this);
         getServer().getPluginManager().registerEvents(new CraftSinkListener(), this);
         getServer().getPluginManager().registerEvents(new CraftTranslateListener(), this);
