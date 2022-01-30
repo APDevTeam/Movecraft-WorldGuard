@@ -9,16 +9,12 @@ import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.util.hitboxes.HitBox;
-import net.countercraft.movecraft.worldguard.CustomFlags;
-import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -34,9 +30,14 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
 
 public class WorldGuardUtils {
+    public enum State {
+        DENY,
+        ALLOW,
+        NONE
+    }
+
     private WorldGuardPlugin wgPlugin;
 
     public boolean init(@NotNull Plugin plugin) {
@@ -44,42 +45,29 @@ public class WorldGuardUtils {
             return false;
 
         wgPlugin = (WorldGuardPlugin) plugin;
-
-        try {
-            FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
-            registry.register(CustomFlags.ALLOW_COMBAT_RELEASE);
-            registry.register(CustomFlags.ALLOW_CRAFT_PILOT);
-            registry.register(CustomFlags.ALLOW_CRAFT_ROTATE);
-            registry.register(CustomFlags.ALLOW_CRAFT_SINK);
-            registry.register(CustomFlags.ALLOW_CRAFT_TRANSLATE);
-        }
-        catch (Exception e) {
-            MovecraftWorldGuard.getInstance().getLogger().log(
-                Level.WARNING, "Failed to register custom WorldGuard flags", e);
-            return false;
-        }
         return true;
     }
 
     /**
      * Get a flag state for the corners of a hitbox
      * 
-     * @param p Player (null for no player)
-     * @param w World
+     * @param p      Player (null for no player)
+     * @param w      World
      * @param hitBox HitBox to check
-     * @param flag Flag to check
+     * @param flag   Flag to check
      * 
      * @return Flag state
      */
-    public StateFlag.State getState(@Nullable Player p, @NotNull World w, @NotNull HitBox hitBox, @NotNull StateFlag flag) {
-        StateFlag.State result = null; // None
+    @NotNull
+    public State getState(@Nullable Player p, @NotNull World w, @NotNull HitBox hitBox, @NotNull StateFlag flag) {
+        State result = State.NONE; // None
         for (MovecraftLocation ml : getHitboxCorners(hitBox)) {
-            switch(getState(p, ml.toBukkit(w), flag)) {
+            switch (getState(p, ml.toBukkit(w), flag)) {
                 case ALLOW: // Allow overrides None
-                    result = StateFlag.State.ALLOW;
+                    result = State.ALLOW;
                     break;
                 case DENY: // Deny overrides all
-                    return StateFlag.State.DENY;
+                    return State.DENY;
                 default: // None, no change
                     break;
             }
@@ -90,15 +78,26 @@ public class WorldGuardUtils {
     /**
      * Get a flag state at a location
      * 
-     * @param p Player (null for no player)
-     * @param loc Location to check
+     * @param p    Player (null for no player)
+     * @param loc  Location to check
      * @param flag Flag to check
      * 
      * @return Flag state
      */
-    public StateFlag.State getState(@Nullable Player p, @NotNull Location loc, @NotNull StateFlag flag) {
+    @NotNull
+    public State getState(@Nullable Player p, @NotNull Location loc, @NotNull StateFlag flag) {
         RegionQuery query = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
-        return query.queryState(BukkitAdapter.adapt(loc), wgPlugin.wrapPlayer(p), flag);
+        StateFlag.State state = query.queryState(BukkitAdapter.adapt(loc), wgPlugin.wrapPlayer(p), flag);
+        if (state == null)
+            return State.NONE;
+        switch (state) {
+            case ALLOW:
+                return State.ALLOW;
+            case DENY:
+                return State.DENY;
+            default:
+                return State.NONE;
+        }
     }
 
     // TODO: move all below into a separate file

@@ -1,7 +1,6 @@
 package net.countercraft.movecraft.worldguard.listener;
 
 import com.sk89q.worldguard.protection.flags.Flags;
-import com.sk89q.worldguard.protection.flags.StateFlag.State;
 
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
@@ -12,6 +11,8 @@ import net.countercraft.movecraft.worldguard.CustomFlags;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import net.countercraft.movecraft.worldguard.localisation.I18nSupport;
 import net.countercraft.movecraft.worldguard.utils.WorldGuardUtils;
+import net.countercraft.movecraft.worldguard.utils.WorldGuardUtils.State;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
