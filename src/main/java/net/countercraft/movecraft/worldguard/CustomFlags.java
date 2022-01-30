@@ -1,4 +1,4 @@
-package net.countercraft.movecraft.worldguard.utils;
+package net.countercraft.movecraft.worldguard;
 
 import com.sk89q.worldguard.protection.flags.StateFlag;
 
