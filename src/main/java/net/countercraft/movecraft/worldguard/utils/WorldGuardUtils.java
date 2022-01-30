@@ -16,6 +16,9 @@ import com.sk89q.worldguard.protection.regions.RegionQuery;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.util.hitboxes.HitBox;
+import net.countercraft.movecraft.worldguard.CustomFlags;
+import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -31,6 +34,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class WorldGuardUtils {
     private WorldGuardPlugin wgPlugin;
@@ -41,61 +45,63 @@ public class WorldGuardUtils {
 
         wgPlugin = (WorldGuardPlugin) plugin;
 
-        FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
-        registry.register(CustomFlags.ALLOW_COMBAT_RELEASE);
-        registry.register(CustomFlags.ALLOW_CRAFT_PILOT);
-        registry.register(CustomFlags.ALLOW_CRAFT_SINK);
-        registry.register(CustomFlags.ALLOW_ROTATE);
-        registry.register(CustomFlags.ALLOW_TRANSLATE);
-        return true;
-    }
-
-    /**
-     * Internal Features
-     */
-
-    public boolean allowedTo(Player p, World w, HitBox hitBox, StateFlag flag) {
-        for (MovecraftLocation ml : getHitboxCorners(hitBox)) {
-            if (!allowedTo(p, ml.toBukkit(w), flag))
-                return false;
+        try {
+            FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
+            registry.register(CustomFlags.ALLOW_COMBAT_RELEASE);
+            registry.register(CustomFlags.ALLOW_CRAFT_PILOT);
+            registry.register(CustomFlags.ALLOW_CRAFT_ROTATE);
+            registry.register(CustomFlags.ALLOW_CRAFT_SINK);
+            registry.register(CustomFlags.ALLOW_CRAFT_TRANSLATE);
+        }
+        catch (Exception e) {
+            MovecraftWorldGuard.getInstance().getLogger().log(
+                Level.WARNING, "Failed to register custom WorldGuard flags", e);
+            return false;
         }
         return true;
     }
 
-    public boolean allowedTo(Player p, Location loc, StateFlag flag) {
+    /**
+     * Get a flag state for the corners of a hitbox
+     * 
+     * @param p Player (null for no player)
+     * @param w World
+     * @param hitBox HitBox to check
+     * @param flag Flag to check
+     * 
+     * @return Flag state
+     */
+    public StateFlag.State getState(@Nullable Player p, @NotNull World w, @NotNull HitBox hitBox, @NotNull StateFlag flag) {
+        StateFlag.State result = null; // None
+        for (MovecraftLocation ml : getHitboxCorners(hitBox)) {
+            switch(getState(p, ml.toBukkit(w), flag)) {
+                case ALLOW: // Allow overrides None
+                    result = StateFlag.State.ALLOW;
+                    break;
+                case DENY: // Deny overrides all
+                    return StateFlag.State.DENY;
+                default: // None, no change
+                    break;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Get a flag state at a location
+     * 
+     * @param p Player (null for no player)
+     * @param loc Location to check
+     * @param flag Flag to check
+     * 
+     * @return Flag state
+     */
+    public StateFlag.State getState(@Nullable Player p, @NotNull Location loc, @NotNull StateFlag flag) {
         RegionQuery query = WorldGuard.getInstance().getPlatform().getRegionContainer().createQuery();
-        return query.queryState(BukkitAdapter.adapt(loc), wgPlugin.wrapPlayer(p), flag) == StateFlag.State.ALLOW;
+        return query.queryState(BukkitAdapter.adapt(loc), wgPlugin.wrapPlayer(p), flag);
     }
 
-    public boolean isFlagDenied(World w, HitBox hitBox, StateFlag flag) {
-        for (MovecraftLocation ml : getHitboxCorners(hitBox)) {
-            if (!isFlagDenied(ml.toBukkit(w), flag))
-                return false;
-        }
-        return true;
-    }
-
-    public boolean isFlagDenied(Location loc, StateFlag flag) {
-        ApplicableRegionSet set = getApplicableRegions(loc);
-        for (ProtectedRegion r : set) {
-            if (r.getFlag(flag) == StateFlag.State.DENY)
-                return true;
-        }
-        return false;
-    }
-
-    /**
-     * Movecraft-Combat Features
-     */
-
-    public boolean isTNTAllowed(World w, HitBox hitBox) {
-        for (MovecraftLocation ml : getHitboxCorners(hitBox)) {
-            if (!isFlagDenied(ml.toBukkit(w), Flags.TNT))
-                return false;
-        }
-        return true;
-    }
-
+    // TODO: move all below into a separate file
     /**
      * Movecraft-Warfare Features
      */
