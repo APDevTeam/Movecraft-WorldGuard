@@ -12,6 +12,7 @@ public class ExplosionListener implements Listener {
         switch (MovecraftWorldGuard.getInstance().getWGUtils().getState(
                 null, e.getExplosionLocation(), Flags.OTHER_EXPLOSION)) {
             case ALLOW:
+            case NONE:
                 break; // Other-explosion is allowed
             case DENY:
                 // Other-explosion is not allowed

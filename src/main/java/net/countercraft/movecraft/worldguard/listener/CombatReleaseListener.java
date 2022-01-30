@@ -37,6 +37,7 @@ public class CombatReleaseListener implements Listener {
                 return;
             case DENY:
                 return; // Craft is not allowed to combat release
+            case NONE:
             default:
                 break;
         }
@@ -49,6 +50,7 @@ public class CombatReleaseListener implements Listener {
                 // PVP is not allowed
                 e.setCancelled(true);
                 return;
+            case NONE:
             default:
                 break;
         }
@@ -61,6 +63,7 @@ public class CombatReleaseListener implements Listener {
                 // TNT is not allowed
                 e.setCancelled(true);
                 return;
+            case NONE:
             default:
                 break;
         }

@@ -37,6 +37,7 @@ public class CraftDetectListener implements Listener {
                 e.setCancelled(true);
                 e.setFailMessage(I18nSupport.getInternationalisedString("CustomFlags - Detection Failed"));
                 return;
+            case NONE:
             default:
                 break;
         }
@@ -45,6 +46,7 @@ public class CraftDetectListener implements Listener {
         switch (wgUtils.getState(p, w, hitBox, Flags.BUILD)) {
             case ALLOW:
                 break; // Craft is allowed to build
+            case NONE:
             case DENY:
                 // Craft is not allowed to build
                 e.setCancelled(true);

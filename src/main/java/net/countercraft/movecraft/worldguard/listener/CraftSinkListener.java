@@ -38,6 +38,7 @@ public class CraftSinkListener implements Listener {
                 p.sendMessage(I18nSupport.getInternationalisedString(
                     "CustomFlags - Sinking a craft is not allowed in this WorldGuard region"));
                 return;
+            case NONE:
             default:
                 break;
         }
@@ -45,13 +46,14 @@ public class CraftSinkListener implements Listener {
         // Check PVP flag
         switch (wgUtils.getState(null, w, hitBox, Flags.PVP)) {
             case ALLOW:
-                break; // PVP is allowed
+                return; // PVP is allowed
             case DENY:
                 // PVP is not allowed
                 e.setCancelled(true);
                 p.sendMessage(I18nSupport.getInternationalisedString(
                     "Player - Craft should sink but PVP is not allowed in this WorldGuard region"));
                 return;
+            case NONE:
             default:
                 break;
         }

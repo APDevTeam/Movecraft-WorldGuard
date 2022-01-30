@@ -50,7 +50,13 @@ public class CraftRotateListener implements Listener {
                         return;
                     }
                 }
-                break;
+                // No denied locations found, set fail message and return
+                e.setFailMessage(I18nSupport.getInternationalisedString(
+                    "CustomFlags - Rotation Failed"
+                    ) + String.format(" @ %d,%d,%d",
+                        hitBox.getMidPoint().getX(), hitBox.getMidPoint().getY(), hitBox.getMidPoint().getZ()));
+                return;
+            case NONE:
             default:
                 break;
         }
@@ -59,12 +65,13 @@ public class CraftRotateListener implements Listener {
         switch (wgUtils.getState(p, w, hitBox, Flags.BUILD)) {
             case ALLOW:
                 break; // Craft is allowed to build
+            case NONE:
             case DENY:
                 // Craft is not allowed to build
                 e.setCancelled(true);
                 for (MovecraftLocation ml : hitBox) {
                     Location loc = ml.toBukkit(w);
-                    if (wgUtils.getState(p, loc, Flags.BUILD) == State.DENY) {
+                    if (wgUtils.getState(p, loc, Flags.BUILD) != State.ALLOW) {
                         // Found first denied location, set fail message and return
                         e.setFailMessage(I18nSupport.getInternationalisedString(
                             "Rotation - WorldGuard - Not Permitted To Build"
@@ -72,7 +79,12 @@ public class CraftRotateListener implements Listener {
                         return;
                     }
                 }
-                break;
+                // No denied locations found, set fail message and return
+                e.setFailMessage(I18nSupport.getInternationalisedString(
+                    "Rotation - WorldGuard - Not Permitted To Build"
+                    ) + String.format(" @ %d,%d,%d",
+                        hitBox.getMidPoint().getX(), hitBox.getMidPoint().getY(), hitBox.getMidPoint().getZ()));
+                return;
             default:
                 break;
         }
