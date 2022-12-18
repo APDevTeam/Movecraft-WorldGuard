@@ -69,7 +69,7 @@
         </repository>
         <repository>
             <id>sk89q-repo</id>
-            <url>https://maven.sk89q.com/repo/</url>
+            <url>https://maven.enginehub.org/repo/</url>
         </repository>
         <repository>
             <id>sonatype</id>
@@ -115,21 +115,21 @@
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-core</artifactId>
-            <version>7.2.3</version>
+            <version>7.2.9</version>
             <scope>provided</scope>
         </dependency>
         <!--WorldGuard-->
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>
             <artifactId>worldguard-bukkit</artifactId>
-            <version>7.0.4</version>
+            <version>7.0.7</version>
             <scope>provided</scope>
         </dependency>
         <!--Annotations-->
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations-java5</artifactId>
-            <version>22.0.0</version>
+            <version>23.1.0</version>
         </dependency>
     </dependencies>
 </project>
