@@ -254,23 +254,14 @@ public class WorldGuardUtils {
         return output.toString();
     }
 
-    public boolean addOwners(String regionName, World w, Set<String> owners) {
+    public boolean addOwners(String regionName, World w, Set<UUID> owners) {
         ProtectedRegion r = getRegion(regionName, w);
         if (r == null)
             return false;
 
         DefaultDomain regionOwners = r.getOwners();
-
-        for (String ownerName : owners) {
-            if (ownerName.length() > 16) {
-                regionOwners.addPlayer(UUID.fromString(ownerName));
-            } else {
-                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(ownerName);
-                if (offlinePlayer == null)
-                    continue;
-
-                regionOwners.addPlayer(offlinePlayer.getUniqueId());
-            }
+        for (UUID owner : owners) {
+            regionOwners.addPlayer(owner);
         }
         return true;
     }
