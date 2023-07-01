@@ -14,6 +14,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
+import net.countercraft.movecraft.util.Pair;
 import net.countercraft.movecraft.util.hitboxes.HitBox;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -302,17 +303,17 @@ public class WorldGuardUtils {
     }
 
     @Nullable
-    public Queue<Chunk> getChunksInRegion(String regionName, World w) {
+    public Queue<Pair<Integer, Integer>> getChunksInRegion(String regionName, World w) {
         ProtectedRegion region = getRegion(regionName, w);
         if (region == null)
             return null;
 
-        Queue<Chunk> chunks = new LinkedList<>();
+        Queue<Pair<Integer, Integer>> chunks = new LinkedList<>();
         for (int x = (int) Math.floor(region.getMinimumPoint().getBlockX() / 16.0); x < Math
                 .floor(region.getMaximumPoint().getBlockX() / 16.0) + 1; x++) {
             for (int z = (int) Math.floor(region.getMinimumPoint().getBlockZ() / 16.0); z < Math
                     .floor(region.getMaximumPoint().getBlockZ() / 16.0) + 1; z++) {
-                chunks.add(w.getChunkAt(x, z));
+                chunks.add(new Pair<>(x, z));
             }
         }
         return chunks;
