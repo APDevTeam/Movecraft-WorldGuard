@@ -1,5 +1,6 @@
 # Movecraft-WorldGuard
 ![WorldGuard](https://github.com/APDevTeam/Movecraft-WorldGuard/actions/workflows/maven.yml/badge.svg)
+[![Codebeat](https://codebeat.co/badges/995849d2-3017-4a93-a9bb-2dcf00c661bd)](https://codebeat.co/projects/github-com-apdevteam-movecraft-worldguard-main)
 
 Home of the code for the following features:
  - WorldGuard plugin integration
@@ -9,7 +10,7 @@ The `1.10.2` branch is coded for Movecraft 7.x and WorldGuard v6.1.x for 1.10.2.
 
 The `1.12.2` branch is coded for Movecraft 7.x and WorldGuard v6.2.x for 1.12.2.
 
-The `main` branch is coded for Movecraft 8.x and WorldGuard v7.x for 1.14.4 to 1.18.1.
+The `main` branch is coded for Movecraft 8.x and WorldGuard v7.x for 1.14.4+.
 
 ## Download
 
@@ -30,6 +31,6 @@ Jars are located in `/target`.
 ## Support
 [Github Issues](https://github.com/APDevTeam/Movecraft-WorldGuard/issues)
 
-[Discord](http://bit.ly/JoinAP-Dev)
+[Discord](https://rebrand.ly/Join-AP-Dev)
 
 The plugin is released here under the GNU General Public License V3. 
