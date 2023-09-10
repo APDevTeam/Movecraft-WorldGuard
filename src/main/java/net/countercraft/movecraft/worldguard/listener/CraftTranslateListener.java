@@ -40,10 +40,10 @@ public class CraftTranslateListener implements Listener {
         // Check custom flag
         switch (wgUtils.getState(p, w, hitBox, CustomFlags.ALLOW_CRAFT_TRANSLATE)) {
             case ALLOW:
-                MovecraftWorldGuard.getInstance().getLogger().info("Allowed");
+                MovecraftWorldGuard.getInstance().getLogger().info("Custom Flag - Allowed");
                 return; // Craft is allowed to translate
             case DENY:
-                MovecraftWorldGuard.getInstance().getLogger().info("Denied");
+                MovecraftWorldGuard.getInstance().getLogger().info("Custom Flag - Denied");
                 // Craft is not allowed to translate
                 e.setCancelled(true);
                 for (MovecraftLocation ml : hitBox) {
@@ -63,21 +63,21 @@ public class CraftTranslateListener implements Listener {
                         hitBox.getMidPoint().getX(), hitBox.getMidPoint().getY(), hitBox.getMidPoint().getZ()));
                 return;
             case NONE:
-                MovecraftWorldGuard.getInstance().getLogger().info("None");
+                MovecraftWorldGuard.getInstance().getLogger().info("Custom Flag - None");
             default:
-                MovecraftWorldGuard.getInstance().getLogger().info("Default");
+                MovecraftWorldGuard.getInstance().getLogger().info("Custom Flag - Default");
                 break;
         }
 
         // Check build flag
         switch (wgUtils.getState(p, w, hitBox, Flags.BUILD)) {
             case ALLOW:
-                MovecraftWorldGuard.getInstance().getLogger().info("Allowed");
+                MovecraftWorldGuard.getInstance().getLogger().info("Build Flag - Allowed");
                 break; // Craft is allowed to build
             case NONE:
-                MovecraftWorldGuard.getInstance().getLogger().info("None");
+                MovecraftWorldGuard.getInstance().getLogger().info("Build Flag - None");
             case DENY:
-                MovecraftWorldGuard.getInstance().getLogger().info("Denied");
+                MovecraftWorldGuard.getInstance().getLogger().info("Build Flag - Denied");
                 // Craft is not allowed to build
                 e.setCancelled(true);
                 for (MovecraftLocation ml : hitBox) {
@@ -97,7 +97,7 @@ public class CraftTranslateListener implements Listener {
                         hitBox.getMidPoint().getX(), hitBox.getMidPoint().getY(), hitBox.getMidPoint().getZ()));
                 return;
             default:
-                MovecraftWorldGuard.getInstance().getLogger().info("Default");
+                MovecraftWorldGuard.getInstance().getLogger().info("Build Flag - Default");
                 break;
         }
     }

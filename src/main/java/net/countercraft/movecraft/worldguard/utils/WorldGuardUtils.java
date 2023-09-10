@@ -16,6 +16,8 @@ import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.util.Pair;
 import net.countercraft.movecraft.util.hitboxes.HitBox;
+import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -65,11 +67,14 @@ public class WorldGuardUtils {
         for (MovecraftLocation ml : getHitboxCorners(hitBox)) {
             switch (getState(p, ml.toBukkit(w), flag)) {
                 case ALLOW: // Allow overrides None
+                    MovecraftWorldGuard.getInstance().getLogger().info("\t- " + ml + ": Allowed (" + flag.getName() + ")");
                     result = State.ALLOW;
                     break;
                 case DENY: // Deny overrides all
+                    MovecraftWorldGuard.getInstance().getLogger().info("\t- " + ml + ": Denied (" + flag.getName() + ")");
                     return State.DENY;
                 default: // None, no change
+                    MovecraftWorldGuard.getInstance().getLogger().info("\t- " + ml + ": None (" + flag.getName() + ")");
                     break;
             }
         }
