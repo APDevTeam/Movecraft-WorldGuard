@@ -33,11 +33,17 @@ public class CraftTranslateListener implements Listener {
         World w = craft.getWorld();
         Player p = ((PilotedCraft) craft).getPilot();
 
+        MovecraftWorldGuard.getInstance().getLogger()
+                .info("Checking hitbox for " + p.getDisplayName() + " at <" + hitBox.getMinX() + "," + hitBox.getMinY()
+                        + "," + hitBox.getMinZ() + "> to <" + hitBox.getMaxX() + "," + hitBox.getMaxY() + ","
+                        + hitBox.getMaxZ() + ">");
         // Check custom flag
         switch (wgUtils.getState(p, w, hitBox, CustomFlags.ALLOW_CRAFT_TRANSLATE)) {
             case ALLOW:
+                MovecraftWorldGuard.getInstance().getLogger().info("Allowed");
                 return; // Craft is allowed to translate
             case DENY:
+                MovecraftWorldGuard.getInstance().getLogger().info("Denied");
                 // Craft is not allowed to translate
                 e.setCancelled(true);
                 for (MovecraftLocation ml : hitBox) {
@@ -57,16 +63,21 @@ public class CraftTranslateListener implements Listener {
                         hitBox.getMidPoint().getX(), hitBox.getMidPoint().getY(), hitBox.getMidPoint().getZ()));
                 return;
             case NONE:
+                MovecraftWorldGuard.getInstance().getLogger().info("None");
             default:
+                MovecraftWorldGuard.getInstance().getLogger().info("Default");
                 break;
         }
 
         // Check build flag
         switch (wgUtils.getState(p, w, hitBox, Flags.BUILD)) {
             case ALLOW:
+                MovecraftWorldGuard.getInstance().getLogger().info("Allowed");
                 break; // Craft is allowed to build
             case NONE:
+                MovecraftWorldGuard.getInstance().getLogger().info("None");
             case DENY:
+                MovecraftWorldGuard.getInstance().getLogger().info("Denied");
                 // Craft is not allowed to build
                 e.setCancelled(true);
                 for (MovecraftLocation ml : hitBox) {
@@ -86,6 +97,7 @@ public class CraftTranslateListener implements Listener {
                         hitBox.getMidPoint().getX(), hitBox.getMidPoint().getY(), hitBox.getMidPoint().getZ()));
                 return;
             default:
+                MovecraftWorldGuard.getInstance().getLogger().info("Default");
                 break;
         }
     }
