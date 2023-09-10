@@ -97,6 +97,18 @@ public class WorldGuardUtils {
         if (p != null) {
             localPlayer = wgPlugin.wrapPlayer(p);
         }
+
+        // The build flag operates slightly differently from others and needs special handling
+        if (flag == Flags.BUILD) {
+            if (query.testBuild(BukkitAdapter.adapt(loc), localPlayer)) {
+                return State.ALLOW;
+            }
+            else {
+                return State.DENY;
+            }
+        }
+
+        // For all other flags, it returns as expected (null if not defined)
         StateFlag.State state = query.queryState(BukkitAdapter.adapt(loc), localPlayer, flag);
         if (state == null)
             return State.NONE;
