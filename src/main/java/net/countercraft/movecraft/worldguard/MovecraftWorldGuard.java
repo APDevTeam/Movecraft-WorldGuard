@@ -25,13 +25,13 @@ public final class MovecraftWorldGuard extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        instance = this;
+
         CustomFlags.register();
     }
 
     @Override
     public void onEnable() {
-        instance = this;
-
         saveDefaultConfig();
 
         // TODO other languages
