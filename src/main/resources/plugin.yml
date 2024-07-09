@@ -3,7 +3,7 @@ version: ${projectVersion}
 main: net.countercraft.movecraft.worldguard.MovecraftWorldGuard
 api-version: 1.18
 depend: [Movecraft, WorldGuard]
-softdepend: [Movecraft-Combat]
+softdepend: [Movecraft-Combat, Movecraft-Repair]
 authors: [TylerS1066, cccm5, BaccaYarro]
 description: WorldGuard integration with Movecraft
 website: https://github.com/APDevTeam/Movecraft-WorldGuard

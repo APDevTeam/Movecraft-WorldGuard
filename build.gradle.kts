@@ -12,6 +12,7 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
     maven { githubPackage("apdevteam/movecraft")(this) }
     maven { githubPackage("apdevteam/movecraft-combat")(this) }
+    maven { githubPackage("apdevteam/movecraft-repair")(this) }
     maven("https://maven.enginehub.org/repo/")
 }
 
@@ -20,6 +21,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
     compileOnly("net.countercraft:movecraft:+")
     compileOnly("net.countercraft.movecraft.combat:movecraft-combat:+")
+    compileOnly("net.countercraft.movecraft.repair:movecraft-repair:1.0.0_beta-4_gradle-2")
     api("com.sk89q.worldedit:worldedit-core:7.2.9")
     api("com.sk89q.worldguard:worldguard-bukkit:7.0.7")
 }
@@ -82,6 +84,9 @@ hangarPublish {
                         required.set(true)
                     }
                     hangar("Movecraft-Combat") {
+                        required.set(false)
+                    }
+                    hangar("Movecraft-Repair") {
                         required.set(false)
                     }
                 }
