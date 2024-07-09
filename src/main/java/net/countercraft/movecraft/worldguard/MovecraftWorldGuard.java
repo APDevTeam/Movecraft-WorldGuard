@@ -1,6 +1,7 @@
 package net.countercraft.movecraft.worldguard;
 
 import net.countercraft.movecraft.combat.MovecraftCombat;
+import net.countercraft.movecraft.repair.MovecraftRepair;
 import net.countercraft.movecraft.worldguard.config.Config;
 import net.countercraft.movecraft.worldguard.listener.*;
 import net.countercraft.movecraft.worldguard.localisation.I18nSupport;
@@ -59,16 +60,17 @@ public final class MovecraftWorldGuard extends JavaPlugin {
             getLogger().info("Found a compatible version of Movecraft-Combat. Enabling Movecraft-Combat integration.");
         }
 
+        Plugin movecraftRepair = getServer().getPluginManager().getPlugin("Movecraft-Repair");
+        if(movecraftRepair instanceof MovecraftRepair) {
+            getServer().getPluginManager().registerEvents(new ProtoRepairCreatedListener(), this);
+            getLogger().info("Found a compatible version of Movecraft-Repair. Enabling Movecraft-Repair integration.");
+        }
+
         getServer().getPluginManager().registerEvents(new CraftDetectListener(), this);
         getServer().getPluginManager().registerEvents(new CraftRotateListener(), this);
         getServer().getPluginManager().registerEvents(new CraftSinkListener(), this);
         getServer().getPluginManager().registerEvents(new CraftTranslateListener(), this);
         getServer().getPluginManager().registerEvents(new ExplosionListener(), this);
-    }
-
-    @Override
-    public void onDisable() {
-
     }
 
     public WorldGuardUtils getWGUtils() {
