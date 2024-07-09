@@ -32,7 +32,7 @@ public class ProtoRepairCreatedListener implements Listener {
             case DENY:
                 // Is not allowed to repair
                 e.setCancelled(true);
-                e.setFailMessage(I18nSupport.getInternationalisedString("CustomFlags - Detection Failed"));
+                e.setFailMessage(I18nSupport.getInternationalisedString("CustomFlags - Repair Failed"));
                 return;
             case NONE:
             default:
@@ -48,7 +48,7 @@ public class ProtoRepairCreatedListener implements Listener {
                 // Is not allowed to build
                 e.setCancelled(true);
                 e.setFailMessage(I18nSupport.getInternationalisedString(
-                        "Detection - WorldGuard - Not Permitted To Build"));
+                        "Repair - WorldGuard - Not Permitted To Build"));
                 return;
             default:
                 break;
