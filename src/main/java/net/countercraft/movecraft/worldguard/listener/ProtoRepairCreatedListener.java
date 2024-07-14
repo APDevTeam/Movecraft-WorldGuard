@@ -1,6 +1,7 @@
 package net.countercraft.movecraft.worldguard.listener;
 
 import com.sk89q.worldguard.protection.flags.Flags;
+import net.countercraft.movecraft.exception.EmptyHitBoxException;
 import net.countercraft.movecraft.repair.events.ProtoRepairCreateEvent;
 import net.countercraft.movecraft.repair.types.ProtoRepair;
 import net.countercraft.movecraft.util.hitboxes.HitBox;
@@ -25,33 +26,36 @@ public class ProtoRepairCreatedListener implements Listener {
         World w = protoRepair.getWorld();
         HitBox hitBox = protoRepair.getHitBox();
 
-        // Check custom flag
-        switch (wgUtils.getState(p, w, hitBox, CustomFlags.ALLOW_CRAFT_REPAIR)) {
-            case ALLOW:
-                return; // Is allowed to repair
-            case DENY:
-                // Is not allowed to repair
-                e.setCancelled(true);
-                e.setFailMessage(I18nSupport.getInternationalisedString("CustomFlags - Repair Failed"));
-                return;
-            case NONE:
-            default:
-                break;
-        }
+        try {
+            // Check custom flag
+            switch (wgUtils.getState(p, w, hitBox, CustomFlags.ALLOW_CRAFT_REPAIR)) {
+                case ALLOW:
+                    return; // Is allowed to repair
+                case DENY:
+                    // Is not allowed to repair
+                    e.setCancelled(true);
+                    e.setFailMessage(I18nSupport.getInternationalisedString("CustomFlags - Repair Failed"));
+                    return;
+                case NONE:
+                default:
+                    break;
+            }
 
-        // Check build flag
-        switch (wgUtils.getState(p, w, hitBox, Flags.BUILD)) {
-            case ALLOW:
-                break; // Is allowed to build
-            case NONE:
-            case DENY:
-                // Is not allowed to build
-                e.setCancelled(true);
-                e.setFailMessage(I18nSupport.getInternationalisedString(
-                        "Repair - WorldGuard - Not Permitted To Build"));
-                return;
-            default:
-                break;
+            // Check build flag
+            switch (wgUtils.getState(p, w, hitBox, Flags.BUILD)) {
+                case ALLOW:
+                    break; // Is allowed to build
+                case NONE:
+                case DENY:
+                    // Is not allowed to build
+                    e.setCancelled(true);
+                    e.setFailMessage(I18nSupport.getInternationalisedString(
+                            "Repair - WorldGuard - Not Permitted To Build"));
+                    return;
+                default:
+                    break;
+            }
+        } catch (EmptyHitBoxException ignored) {
         }
     }
 }

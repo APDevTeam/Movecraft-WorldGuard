@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.PilotedCraft;
 import net.countercraft.movecraft.events.CraftDetectEvent;
+import net.countercraft.movecraft.exception.EmptyHitBoxException;
 import net.countercraft.movecraft.util.hitboxes.HitBox;
 import net.countercraft.movecraft.worldguard.CustomFlags;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
@@ -28,33 +29,36 @@ public class CraftDetectListener implements Listener {
         World w = craft.getWorld();
         Player p = ((PilotedCraft) craft).getPilot();
 
-        // Check custom flag
-        switch (wgUtils.getState(p, w, hitBox, CustomFlags.ALLOW_CRAFT_PILOT)) {
-            case ALLOW:
-                return; // Craft is allowed to pilot
-            case DENY:
-                // Craft is not allowed to pilot
-                e.setCancelled(true);
-                e.setFailMessage(I18nSupport.getInternationalisedString("CustomFlags - Detection Failed"));
-                return;
-            case NONE:
-            default:
-                break;
-        }
+        try {
+            // Check custom flag
+            switch (wgUtils.getState(p, w, hitBox, CustomFlags.ALLOW_CRAFT_PILOT)) {
+                case ALLOW:
+                    return; // Craft is allowed to pilot
+                case DENY:
+                    // Craft is not allowed to pilot
+                    e.setCancelled(true);
+                    e.setFailMessage(I18nSupport.getInternationalisedString("CustomFlags - Detection Failed"));
+                    return;
+                case NONE:
+                default:
+                    break;
+            }
 
-        // Check build flag
-        switch (wgUtils.getState(p, w, hitBox, Flags.BUILD)) {
-            case ALLOW:
-                break; // Craft is allowed to build
-            case NONE:
-            case DENY:
-                // Craft is not allowed to build
-                e.setCancelled(true);
-                e.setFailMessage(I18nSupport.getInternationalisedString(
-                    "Detection - WorldGuard - Not Permitted To Build"));
-                return;
-            default:
-                break;
+            // Check build flag
+            switch (wgUtils.getState(p, w, hitBox, Flags.BUILD)) {
+                case ALLOW:
+                    break; // Craft is allowed to build
+                case NONE:
+                case DENY:
+                    // Craft is not allowed to build
+                    e.setCancelled(true);
+                    e.setFailMessage(I18nSupport.getInternationalisedString(
+                        "Detection - WorldGuard - Not Permitted To Build"));
+                    return;
+                default:
+                    break;
+            }
+        } catch (EmptyHitBoxException ignored) {
         }
     }
 }

@@ -14,6 +14,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
+import net.countercraft.movecraft.exception.EmptyHitBoxException;
 import net.countercraft.movecraft.util.Pair;
 import net.countercraft.movecraft.util.hitboxes.HitBox;
 import org.bukkit.Bukkit;
@@ -59,7 +60,7 @@ public class WorldGuardUtils {
      * @return Flag state
      */
     @NotNull
-    public State getState(@Nullable Player p, @NotNull World w, @NotNull HitBox hitBox, @NotNull StateFlag flag) {
+    public State getState(@Nullable Player p, @NotNull World w, @NotNull HitBox hitBox, @NotNull StateFlag flag) throws EmptyHitBoxException {
         State result = State.NONE; // None
         for (MovecraftLocation ml : getHitboxCorners(hitBox)) {
             switch (getState(p, ml.toBukkit(w), flag)) {
@@ -123,7 +124,7 @@ public class WorldGuardUtils {
 
     // Siege Features
 
-    public boolean craftFullyInRegion(String regionName, World w, Craft craft) {
+    public boolean craftFullyInRegion(String regionName, World w, Craft craft) throws EmptyHitBoxException {
         ProtectedRegion r = getRegion(regionName, w);
         if (r == null)
             return false;
@@ -378,7 +379,7 @@ public class WorldGuardUtils {
      *         For tiny crafts, this may be smaller than 27 due to overlaps.
      */
     @NotNull
-    private Set<MovecraftLocation> getHitboxCorners(@NotNull HitBox hitbox) {
+    private Set<MovecraftLocation> getHitboxCorners(@NotNull HitBox hitbox) throws EmptyHitBoxException {
         Set<MovecraftLocation> corners = new HashSet<>();
         MovecraftLocation midPoint = hitbox.getMidPoint();
         for (int x : new int[] { hitbox.getMinX(), midPoint.getX(), hitbox.getMaxX() }) {
