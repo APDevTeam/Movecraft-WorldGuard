@@ -67,6 +67,7 @@ public final class MovecraftWorldGuard extends JavaPlugin {
         }
 
         getServer().getPluginManager().registerEvents(new CraftDetectListener(), this);
+        getServer().getPluginManager().registerEvents(new CraftDirectListener(), this);
         getServer().getPluginManager().registerEvents(new CraftRotateListener(), this);
         getServer().getPluginManager().registerEvents(new CraftSinkListener(), this);
         getServer().getPluginManager().registerEvents(new CraftTranslateListener(), this);
