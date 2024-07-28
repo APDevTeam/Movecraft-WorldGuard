@@ -31,6 +31,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class WorldGuardUtils {
     public enum State {
@@ -164,6 +165,10 @@ public class WorldGuardUtils {
 
     public boolean regionExists(String regionName, World w) {
         return getRegion(regionName, w) != null;
+    }
+
+    public Set<String> getRegions(HitBox hitBox, World w) {
+        return getApplicableRegions(hitBox, w).stream().map(ProtectedRegion::getId).collect(Collectors.toSet());
     }
 
     public boolean ownsAssaultableRegion(Player p) {
@@ -359,6 +364,15 @@ public class WorldGuardUtils {
             return null;
 
         return regions.getRegion(regionName);
+    }
+
+    @NotNull
+    private Set<ProtectedRegion> getApplicableRegions(HitBox hitBox, World w) {
+        Set<ProtectedRegion> regions = new HashSet<>();
+        for (MovecraftLocation ml : getHitboxCorners(hitBox)) {
+            regions.addAll(getApplicableRegions(ml.toBukkit(w)).getRegions());
+        }
+        return regions;
     }
 
     @NotNull
