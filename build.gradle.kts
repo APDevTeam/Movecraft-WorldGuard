@@ -27,7 +27,7 @@ dependencies {
 }
 
 group = "net.countercraft.movecraft.worldguard"
-version = "1.0.0_beta-6"
+version = "1.0.0_beta-5"
 description = "Movecraft-WorldGuard"
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
