@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.events.ExplosionEvent;
+import net.countercraft.movecraft.util.MathUtils;
 import net.countercraft.movecraft.worldguard.CustomFlags;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import net.countercraft.movecraft.worldguard.utils.WorldGuardUtils;
@@ -34,7 +35,7 @@ public class ExplosionListener implements Listener {
             return;
         }
 
-        MovecraftLocation movecraftLocation = new MovecraftLocation(explosionLocation.getBlockX(), explosionLocation.getBlockY(), explosionLocation.getBlockZ());
+        MovecraftLocation movecraftLocation = MathUtils.bukkit2MovecraftLoc(explosionLocation);
         boolean explodingOnCraft = CraftManager.getInstance().getCraftsInWorld(explosionLocation.getWorld()).stream().anyMatch(it -> it.getHitBox().contains(movecraftLocation));
 
         e.setCancelled(!explodingOnCraft);

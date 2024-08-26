@@ -2,6 +2,7 @@ package net.countercraft.movecraft.worldguard.listener;
 
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.CraftManager;
+import net.countercraft.movecraft.util.MathUtils;
 import net.countercraft.movecraft.worldguard.CustomFlags;
 import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import net.countercraft.movecraft.worldguard.utils.WorldGuardUtils;
@@ -21,7 +22,7 @@ public class BurnListener implements Listener {
             return;
         }
 
-        MovecraftLocation movecraftLocation = new MovecraftLocation(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        MovecraftLocation movecraftLocation = MathUtils.bukkit2MovecraftLoc(location);
         boolean burningCraft = CraftManager.getInstance().getCraftsInWorld(location.getWorld()).stream().anyMatch(it -> it.getHitBox().contains(movecraftLocation));
 
         e.setCancelled(!burningCraft);
