@@ -33,13 +33,7 @@ public class ExplosionListener implements Listener {
         }
 
         MovecraftLocation movecraftLocation = new MovecraftLocation(explosionLocation.getBlockX(), explosionLocation.getBlockY(), explosionLocation.getBlockZ());
-        boolean explodingOnCraft = CraftManager.getInstance().getCrafts().stream().anyMatch(it -> {
-            if (it.getWorld() != explosionLocation.getWorld()) {
-                return false;
-            }
-
-            return it.getHitBox().contains(movecraftLocation);
-        });
+        boolean explodingOnCraft = CraftManager.getInstance().getCraftsInWorld(explosionLocation.getWorld()).stream().anyMatch(it -> it.getHitBox().contains(movecraftLocation));
 
         e.setCancelled(!explodingOnCraft);
     }
