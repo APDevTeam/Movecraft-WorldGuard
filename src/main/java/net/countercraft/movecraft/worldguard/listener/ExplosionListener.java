@@ -17,13 +17,15 @@ public class ExplosionListener implements Listener {
         var wgUtils = MovecraftWorldGuard.getInstance().getWGUtils();
         Location explosionLocation = e.getExplosionLocation();
 
-        switch (wgUtils.getState(null, explosionLocation, Flags.OTHER_EXPLOSION)) {
+        switch (wgUtils.getState(null, e.getExplosionLocation(), Flags.OTHER_EXPLOSION)) {
+            case ALLOW:
+            case NONE:
+                break; // Other-explosion is allowed
             case DENY:
                 // Other-explosion is not allowed
                 e.setCancelled(true);
                 return;
-            case ALLOW: // Other-explosion is allowed
-            case NONE:
+            default:
                 break;
         }
 
