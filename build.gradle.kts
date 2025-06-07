@@ -29,7 +29,7 @@ dependencies {
 group = "net.countercraft.movecraft.worldguard"
 version = "1.0.0_beta-5"
 description = "Movecraft-WorldGuard"
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 tasks.jar {
     archiveBaseName.set("Movecraft-WorldGuard")
