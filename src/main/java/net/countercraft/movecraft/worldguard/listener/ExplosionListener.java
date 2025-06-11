@@ -56,49 +56,34 @@ public class ExplosionListener implements Listener {
     private List<Block> getProtectedBlocks(List<Block> blocks) {
         List<Block> protectedBlocks = new ArrayList<>();
         for (Block block : blocks) {
-            WorldGuardUtils.State state = MovecraftWorldGuard.getInstance().getWGUtils().getState(
-                    null, block.getLocation(), CustomFlags.ALLOW_CRAFT_COMBAT);
-            if (state == WorldGuardUtils.State.ALLOW) {
-                MovecraftLocation loc = MathUtils.bukkit2MovecraftLoc(block.getLocation());
-                Craft craft = fastNearestCraftToLoc(block.getLocation());
-                if (craft == null) {
-                    protectedBlocks.add(block);
-                    System.out.println("Protected block added!");
-                    continue;
-                }
-                if (!craft.getHitBox().contains(loc)) {
-                    protectedBlocks.add(block);
-                    System.out.println("Protected block added!");
-                }
-            } else if (state == WorldGuardUtils.State.DENY) {
-                MovecraftLocation loc = MathUtils.bukkit2MovecraftLoc(block.getLocation());
-                Craft craft = fastNearestCraftToLoc(block.getLocation());
-                if (craft == null) {
-                    continue;
-                }
-                if (craft.getHitBox().contains(loc)) {
-                    protectedBlocks.add(block);
-                    System.out.println("Protected block added!");
-                }
+            MovecraftLocation loc = MathUtils.bukkit2MovecraftLoc(block.getLocation());
+            Craft craft = MathUtils.fastNearestCraftToLoc(
+                    CraftManager.getInstance().getCraftsInWorld(block.getWorld()),
+                    block.getLocation()
+            );
+            switch (MovecraftWorldGuard.getInstance().getWGUtils().getState(
+                    null, block.getLocation(), CustomFlags.ALLOW_CRAFT_COMBAT)) {
+                case ALLOW:
+                    if (craft == null) {
+                        protectedBlocks.add(block);
+                        continue;
+                    }
+                    if (!craft.getHitBox().contains(loc)) {
+                        protectedBlocks.add(block);
+                    }
+                case NONE:
+                    break;
+                case DENY:
+                    if (craft == null) {
+                        continue;
+                    }
+                    if (craft.getHitBox().contains(loc)) {
+                        protectedBlocks.add(block);
+                    }
+                default:
+                    break;
             }
         }
         return protectedBlocks;
-    }
-
-    private Craft fastNearestCraftToLoc(@NotNull Location source) {
-        MovecraftLocation loc = MathUtils.bukkit2MovecraftLoc(source);
-        Craft closest = null;
-        long closestDistSquared = Long.MAX_VALUE;
-        for (Craft other : CraftManager.getInstance()) {
-            if (other.getWorld() != source.getWorld())
-                continue;
-
-            long distSquared = other.getHitBox().getMidPoint().distanceSquared(loc);
-            if (distSquared < closestDistSquared) {
-                closestDistSquared = distSquared;
-                closest = other;
-            }
-        }
-        return closest;
     }
 }

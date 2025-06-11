@@ -14,7 +14,9 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
+import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.exception.EmptyHitBoxException;
+import net.countercraft.movecraft.util.MathUtils;
 import net.countercraft.movecraft.util.Pair;
 import net.countercraft.movecraft.util.hitboxes.HitBox;
 import org.bukkit.Bukkit;
@@ -404,5 +406,26 @@ public class WorldGuardUtils {
             }
         }
         return corners;
+    }
+
+    /**
+     * @param source Location of the block
+     * @return The closest craft to the block. If the block is within the craft, it should return it.
+     */
+    private Craft fastNearestCraftToLoc(@NotNull Location source) {
+        MovecraftLocation loc = MathUtils.bukkit2MovecraftLoc(source);
+        Craft closest = null;
+        long closestDistSquared = Long.MAX_VALUE;
+        for (Craft other : CraftManager.getInstance()) {
+            if (other.getWorld() != source.getWorld())
+                continue;
+
+            long distSquared = other.getHitBox().getMidPoint().distanceSquared(loc);
+            if (distSquared < closestDistSquared) {
+                closestDistSquared = distSquared;
+                closest = other;
+            }
+        }
+        return closest;
     }
 }
