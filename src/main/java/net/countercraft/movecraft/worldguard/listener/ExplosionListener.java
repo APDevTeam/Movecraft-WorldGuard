@@ -56,32 +56,8 @@ public class ExplosionListener implements Listener {
     private List<Block> getProtectedBlocks(List<Block> blocks) {
         List<Block> protectedBlocks = new ArrayList<>();
         for (Block block : blocks) {
-            MovecraftLocation loc = MathUtils.bukkit2MovecraftLoc(block.getLocation());
-            Craft craft = MathUtils.fastNearestCraftToLoc(
-                    CraftManager.getInstance().getCraftsInWorld(block.getWorld()),
-                    block.getLocation()
-            );
-            switch (MovecraftWorldGuard.getInstance().getWGUtils().getState(
-                    null, block.getLocation(), CustomFlags.ALLOW_CRAFT_COMBAT)) {
-                case ALLOW:
-                    if (craft == null) {
-                        protectedBlocks.add(block);
-                        continue;
-                    }
-                    if (!craft.getHitBox().contains(loc)) {
-                        protectedBlocks.add(block);
-                    }
-                case NONE:
-                    break;
-                case DENY:
-                    if (craft == null) {
-                        continue;
-                    }
-                    if (craft.getHitBox().contains(loc)) {
-                        protectedBlocks.add(block);
-                    }
-                default:
-                    break;
+            if (MovecraftWorldGuard.getInstance().getWGUtils().isProtectedFromBreak(block)) {
+                protectedBlocks.add(block);
             }
         }
         return protectedBlocks;
