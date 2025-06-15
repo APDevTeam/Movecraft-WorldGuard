@@ -13,6 +13,7 @@ public class CustomFlags {
     public static final StateFlag ALLOW_CRAFT_SINK = new StateFlag("allow-craft-sink", false);
     public static final StateFlag ALLOW_CRAFT_TRANSLATE = new StateFlag("allow-craft-translate", false);
     public static final StateFlag ALLOW_CRAFT_REPAIR = new StateFlag("allow-craft-repair", false);
+    public static final StateFlag ONLY_DAMAGE_PILOTED_CRAFTS = new StateFlag("only-damage-piloted-crafts", false);
 
     public static void register() {
         try {
@@ -23,6 +24,7 @@ public class CustomFlags {
             registry.register(ALLOW_CRAFT_SINK);
             registry.register(ALLOW_CRAFT_TRANSLATE);
             registry.register(ALLOW_CRAFT_REPAIR);
+            registry.register(ONLY_DAMAGE_PILOTED_CRAFTS);
         }
         catch (Exception e) {
             MovecraftWorldGuard.getInstance().getLogger().log(
