@@ -14,13 +14,18 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.Craft;
+import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.exception.EmptyHitBoxException;
+import net.countercraft.movecraft.util.MathUtils;
 import net.countercraft.movecraft.util.Pair;
 import net.countercraft.movecraft.util.hitboxes.HitBox;
+import net.countercraft.movecraft.worldguard.CustomFlags;
+import net.countercraft.movecraft.worldguard.MovecraftWorldGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -404,5 +409,42 @@ public class WorldGuardUtils {
             }
         }
         return corners;
+    }
+
+    /**
+     * @param block Block to check
+     * @return A boolean that determines if the block is protected from breaking.
+     */
+    @NotNull
+    public boolean isProtectedFromBreak(Block block) {
+        MovecraftLocation loc = MathUtils.bukkit2MovecraftLoc(block.getLocation());
+        Craft craft = MathUtils.fastNearestCraftToLoc(
+                CraftManager.getInstance().getCraftsInWorld(block.getWorld()),
+                block.getLocation()
+        );
+        switch (MovecraftWorldGuard.getInstance().getWGUtils().getState(
+                null, block.getLocation(), CustomFlags.ALLOW_CRAFT_COMBAT)) {
+            case ALLOW:
+                // Protect the area outside the craft
+                if (craft == null) {
+                    return true;
+                }
+                if (!craft.getHitBox().contains(loc)) {
+                    return true;
+                }
+                break;
+            case DENY:
+                // Protect the block if fire occurs inside craft
+                if (craft == null) {
+                    break;
+                }
+                if (craft.getHitBox().contains(loc)) {
+                    return true;
+                }
+                break;
+            default:
+                break;
+        }
+        return false;
     }
 }
